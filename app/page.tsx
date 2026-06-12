@@ -7,6 +7,7 @@ import SearchInput, { type GeoResult } from "@/components/SearchInput";
 import { getSupabase } from "@/lib/supabase";
 import type { Combustivel, RouteResponse, VehicleType } from "@/lib/types";
 import { TIPOS_CARGA, type TipoCarga } from "@/lib/freight";
+import BotaoRastrear from "@/components/BotaoRastrear";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 
@@ -422,6 +423,11 @@ export default function Home() {
           >
             {carregando ? "Calculando…" : "Calcular rota"}
           </button>
+
+          <BotaoRastrear
+            origemLabel={origem?.label}
+            destinoLabel={destino?.label}
+          />
 
           {erro && (
             <p className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
