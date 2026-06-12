@@ -38,7 +38,7 @@ export async function calcularRota(opts: {
     (wantAlts ? "&alternatives=2" : "");
 
   const res = await fetch(url, {
-    headers: { "User-Agent": "RotasPro/0.1 (MVP)" },
+    headers: { "User-Agent": "Irmão da Estrada/0.1 (MVP)" },
     next: { revalidate: 0 },
   });
   if (!res.ok) throw new Error(`Serviço de rotas indisponível (${res.status}).`);

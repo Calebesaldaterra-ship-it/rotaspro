@@ -76,13 +76,13 @@ export default function Home() {
   // perfis salvos
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("rotaspro:perfis");
+      const raw = localStorage.getItem("irmao-da-estrada:perfis");
       if (raw) setPerfis(JSON.parse(raw));
     } catch {}
   }, []);
   const salvarPerfis = (p: Perfil[]) => {
     setPerfis(p);
-    localStorage.setItem("rotaspro:perfis", JSON.stringify(p));
+    localStorage.setItem("irmao-da-estrada:perfis", JSON.stringify(p));
   };
 
   // preço automático pela UF de origem
@@ -150,12 +150,12 @@ export default function Home() {
       {/* header */}
       <header className="flex items-center justify-between border-b border-slate-800 px-4 py-2.5">
         <div className="flex items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-amber-400 text-base font-black text-slate-950">
-            R
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-amber-400 text-base text-slate-950">
+            🛣️
           </span>
           <div>
             <h1 className="text-base font-bold leading-none">
-              Rotas<span className="text-amber-400">Pro</span>
+              Irmão da <span className="text-amber-400">Estrada</span>
             </h1>
             <p className="text-[11px] text-slate-500">
               rota · pedágio · combustível · frete
