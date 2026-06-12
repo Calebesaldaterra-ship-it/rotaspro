@@ -34,7 +34,8 @@ export default function TrackPage() {
   const [sessao, setSessao] = useState<Sessao | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
-  const channelRef = useRef<ReturnType<typeof getSupabase> extends null ? null : ReturnType<NonNullable<ReturnType<typeof getSupabase>>["channel"]> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const channelRef = useRef<any>(null);
 
   // atualiza o "X atrás" a cada 5s
   useEffect(() => {
@@ -75,7 +76,6 @@ export default function TrackPage() {
       )
       .subscribe();
 
-    // @ts-expect-error - ref typing simplificado
     channelRef.current = channel;
     return () => { sb.removeChannel(channel); };
   }, [id]);
