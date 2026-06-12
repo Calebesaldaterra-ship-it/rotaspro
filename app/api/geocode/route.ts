@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     `&q=${encodeURIComponent(q)}&countrycodes=br&limit=6&addressdetails=1` +
     "&accept-language=pt-BR";
   const res = await fetch(url, {
-    headers: { "User-Agent": "Irmão da Estrada/0.1 (app de rotas; contato local)" },
+    headers: { "User-Agent": "RotasPro/0.1 (app de rotas; contato local)" },
     next: { revalidate: 86400 },
   });
   if (!res.ok) {

@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Irmão da Estrada — rota, pedágio, combustível e frete",
+  title: "RotasPro — rota, pedágio, combustível e frete",
   description:
     "Calcule rotas no Brasil com custo de pedágio por categoria de veículo, combustível por estado, comparação de alternativas e piso mínimo de frete ANTT.",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, title: "Irmão da Estrada", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "RotasPro", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {

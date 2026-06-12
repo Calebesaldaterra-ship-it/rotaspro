@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "API — Irmão da Estrada" };
+export const metadata = { title: "API — RotasPro" };
 
 const EXEMPLO = `GET /api/v1/rota
   ?origem=-23.5505,-46.6333      # lat,lon (obrigatório)
@@ -42,7 +42,7 @@ export default function Docs() {
           ← voltar ao app
         </Link>
         <h1 className="mt-4 text-2xl font-bold">
-          API Irmão da <span className="text-amber-400">Estrada</span> v1
+          API Rotas<span className="text-amber-400">Pro</span> v1
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate-400">
           Integre cálculo de rota, pedágio e combustível ao seu sistema com uma única

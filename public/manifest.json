@@ -1,6 +1,6 @@
 {
-  "name": "Irmão da Estrada — rota, pedágio, combustível e frete",
-  "short_name": "Irmão da Estrada",
+  "name": "RotasPro — rota, pedágio, combustível e frete",
+  "short_name": "RotasPro",
   "description": "Calculadora de rotas com pedágio, combustível, tempo e frete mínimo ANTT.",
   "start_url": "/",
   "display": "standalone",
