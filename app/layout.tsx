@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ServiceWorkerRegistration from "./ServiceWorkerRegistration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,13 +18,25 @@ export const metadata: Metadata = {
   description:
     "Calcule rotas no Brasil com custo de pedágio por categoria de veículo, combustível por estado, comparação de alternativas e piso mínimo de frete ANTT.",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, title: "RotasPro", statusBarStyle: "black-translucent" },
+  appleWebApp: {
+    capable: true,
+    title: "RotasPro",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#020617",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -36,7 +49,10 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-950">
+        {children}
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   );
 }
