@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calcularRota, precosPorUF } from "@/lib/routing";
 import { pisoMinimoFrete, type TipoCarga } from "@/lib/freight";
+import { registrarUso, verificarAcesso } from "@/lib/acesso";
 import type { Combustivel, LatLng, VehicleType } from "@/lib/types";
 
 type Body = {
@@ -15,6 +16,14 @@ type Body = {
 };
 
 export async function POST(req: NextRequest) {
+  const acesso = await verificarAcesso(req);
+  if (!acesso.permitido) {
+    return NextResponse.json(
+      { erro: acesso.motivo, paywall: true },
+      { status: 402 },
+    );
+  }
+
   let body: Body;
   try {
     body = await req.json();
@@ -57,7 +66,13 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    return NextResponse.json({ ...resultado, frete });
+    const res = NextResponse.json({
+      ...resultado,
+      frete,
+      usosRestantes: acesso.assinante ? null : acesso.usosRestantes,
+    });
+    if (!acesso.assinante) registrarUso(req, res);
+    return res;
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Erro ao calcular a rota.";
     return NextResponse.json({ erro: msg }, { status: 502 });

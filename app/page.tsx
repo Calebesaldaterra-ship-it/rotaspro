@@ -1,8 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SearchInput, { type GeoResult } from "@/components/SearchInput";
+import { getSupabase } from "@/lib/supabase";
 import type { Combustivel, RouteResponse, VehicleType } from "@/lib/types";
 import { TIPOS_CARGA, type TipoCarga } from "@/lib/freight";
 
@@ -69,6 +71,8 @@ export default function Home() {
   const [selecionada, setSelecionada] = useState(0);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [paywall, setPaywall] = useState(false);
+  const [usosRestantes, setUsosRestantes] = useState<number | null>(null);
 
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [nomePerfil, setNomePerfil] = useState("");
@@ -110,10 +114,19 @@ export default function Home() {
     }
     setCarregando(true);
     setErro(null);
+    setPaywall(false);
     try {
+      // se logado, envia o token para liberar uso ilimitado do assinante
+      const supabase = getSupabase();
+      const token = supabase
+        ? (await supabase.auth.getSession()).data.session?.access_token
+        : undefined;
       const res = await fetch("/api/rota", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           pontos: [origem, ...paradas.filter(Boolean), destino].map((p) => ({
             lat: p!.lat,
@@ -129,9 +142,15 @@ export default function Home() {
         }),
       });
       const data = await res.json();
+      if (res.status === 402) {
+        setPaywall(true);
+        setResultado(null);
+        return;
+      }
       if (!res.ok) throw new Error(data.erro ?? "Erro ao calcular.");
       setResultado(data);
       setFrete(data.frete ?? null);
+      setUsosRestantes(data.usosRestantes ?? null);
       setSelecionada(0);
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Erro inesperado.");
@@ -162,12 +181,20 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <a
-          href="/docs"
-          className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-amber-400/60 hover:text-amber-300"
-        >
-          API
-        </a>
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/conta"
+            className="rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-300"
+          >
+            Assinar · R$ 15/mês
+          </Link>
+          <a
+            href="/docs"
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-amber-400/60 hover:text-amber-300"
+          >
+            API
+          </a>
+        </div>
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
@@ -399,6 +426,37 @@ export default function Home() {
           {erro && (
             <p className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
               {erro}
+            </p>
+          )}
+
+          {paywall && (
+            <div className="mt-3 rounded-2xl border border-amber-400/50 bg-amber-400/10 p-4 text-center">
+              <p className="text-sm font-bold text-amber-200">
+                Seus cálculos grátis de hoje acabaram 🛣️
+              </p>
+              <p className="mt-1 text-xs text-slate-300">
+                Assine o RotasPro e calcule rotas, pedágios e fretes sem limite.
+              </p>
+              <Link
+                href="/conta"
+                className="mt-3 inline-block rounded-xl bg-amber-400 px-5 py-2.5 text-sm font-bold text-slate-950 hover:bg-amber-300"
+              >
+                Assinar — R$ 15/mês
+              </Link>
+              <p className="mt-2 text-[11px] text-slate-500">
+                Já é assinante? <Link href="/conta" className="underline">Entre na sua conta</Link>.
+              </p>
+            </div>
+          )}
+
+          {usosRestantes !== null && !paywall && resultado && (
+            <p className="mt-2 text-center text-[11px] text-slate-500">
+              {usosRestantes > 0
+                ? `${usosRestantes} cálculo${usosRestantes > 1 ? "s" : ""} grátis restante${usosRestantes > 1 ? "s" : ""} hoje · `
+                : "Último cálculo grátis de hoje · "}
+              <Link href="/conta" className="text-amber-300/90 underline">
+                assine por R$ 15/mês
+              </Link>
             </p>
           )}
 
