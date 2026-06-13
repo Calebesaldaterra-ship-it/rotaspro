@@ -31,6 +31,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ erro: "JSON inválido" }, { status: 400 });
   }
 
+  const MAX_PONTOS = 25;
+  if (!Array.isArray(body.pontos) || body.pontos.length < 2) {
+    return NextResponse.json(
+      { erro: "Informe ao menos 2 pontos (origem e destino)." },
+      { status: 400 },
+    );
+  }
+  if (body.pontos.length > MAX_PONTOS) {
+    return NextResponse.json(
+      { erro: `Máximo de ${MAX_PONTOS} pontos por rota.` },
+      { status: 400 },
+    );
+  }
+  if (!body.pontos.every((p) => typeof p?.lat === "number" && typeof p?.lon === "number" && Number.isFinite(p.lat) && Number.isFinite(p.lon))) {
+    return NextResponse.json(
+      { erro: "Todos os pontos devem ter lat e lon numéricos válidos." },
+      { status: 400 },
+    );
+  }
+
   const tipo = body.tipo ?? "carro";
   const eixos = body.eixos ?? (tipo === "carro" ? 2 : tipo === "moto" ? 2 : 5);
   const consumo = body.consumo ?? { moto: 25, carro: 11.5, onibus: 3.2, caminhao: 2.8 }[tipo];

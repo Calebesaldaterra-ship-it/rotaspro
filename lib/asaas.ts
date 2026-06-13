@@ -1,4 +1,5 @@
 // Integração Asaas (assinatura recorrente) — uso exclusivo no servidor.
+import "server-only";
 
 export const PRECO_MENSAL = 15;
 

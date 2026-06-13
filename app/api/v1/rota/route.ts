@@ -29,10 +29,14 @@ export async function GET(req: NextRequest) {
   }
   const paradas = sp.getAll("parada").map(parse).filter((p) => p !== null);
 
-  const tipo = (sp.get("tipo") ?? "carro") as VehicleType;
+  const TIPOS_VALIDOS: VehicleType[] = ["moto", "carro", "onibus", "caminhao"];
+  const COMBUSTIVEIS_VALIDOS: Combustivel[] = ["gasolina", "etanol", "diesel", "gnv"];
+  const tipoParam = sp.get("tipo") ?? "carro";
+  const tipo = (TIPOS_VALIDOS.includes(tipoParam as VehicleType) ? tipoParam : "carro") as VehicleType;
   const eixos = Number(sp.get("eixos") ?? (tipo === "caminhao" ? 5 : 2));
   const consumo = Number(sp.get("consumo") ?? 11.5);
-  const combustivel = (sp.get("combustivel") ?? "gasolina") as Combustivel;
+  const combustivelParam = sp.get("combustivel") ?? "gasolina";
+  const combustivel = (COMBUSTIVEIS_VALIDOS.includes(combustivelParam as Combustivel) ? combustivelParam : "gasolina") as Combustivel;
   const preco = sp.get("preco") ? Number(sp.get("preco")) : undefined;
   const incluirGeometria = sp.get("geometria") === "1";
 

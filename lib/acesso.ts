@@ -45,14 +45,18 @@ export async function verificarAcesso(req: NextRequest): Promise<Acesso> {
 
   const user = await usuarioDoToken(req.headers.get("authorization"));
   if (user) {
-    const { data } = await getAdmin()!
+    const db = getAdmin();
+    if (!db) return { permitido: true, assinante: false, usosRestantes: null };
+    const { data } = await db
       .from("rp_assinaturas")
       .select("status, pago_ate")
       .eq("user_id", user.id)
       .maybeSingle();
+    const pagoAteDate = data?.pago_ate ? new Date(data.pago_ate) : null;
+    const pagoAteValido = pagoAteDate instanceof Date && !isNaN(pagoAteDate.getTime());
     const ativa =
       data?.status === "ativa" &&
-      (!data.pago_ate || new Date(data.pago_ate) > new Date());
+      (!data.pago_ate || (pagoAteValido && pagoAteDate! > new Date()));
     if (ativa) return { permitido: true, assinante: true, usosRestantes: null };
   }
 

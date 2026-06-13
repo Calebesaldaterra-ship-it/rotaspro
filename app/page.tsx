@@ -9,7 +9,10 @@ import type { Combustivel, RouteResponse, VehicleType } from "@/lib/types";
 import { TIPOS_CARGA, type TipoCarga } from "@/lib/freight";
 import BotaoRastrear from "@/components/BotaoRastrear";
 
-const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
+const MapView = dynamic(() => import("@/components/MapView"), {
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-slate-900" />,
+});
 
 type Ponto = GeoResult | null;
 
@@ -97,7 +100,7 @@ export default function Home() {
     fetch(`/api/combustivel?uf=${uf}`)
       .then((r) => r.json())
       .then((d) => setPreco(d.precos[combustivel] ?? 6.19))
-      .catch(() => {});
+      .catch((err) => { console.warn("Falha ao atualizar preço do combustível:", err); });
   }, [origem?.uf, combustivel, precoEditado]);
 
   const pontosMapa = useMemo(

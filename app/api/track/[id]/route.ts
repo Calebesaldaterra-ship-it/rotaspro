@@ -8,6 +8,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return NextResponse.json({ erro: "ID inválido" }, { status: 400 });
+  }
   const admin = getAdmin();
   if (!admin) {
     return NextResponse.json({ erro: "Supabase não configurado" }, { status: 503 });
@@ -41,7 +44,7 @@ export async function PATCH(
 
 // DELETE /api/track/[id] — encerra a sessão
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;

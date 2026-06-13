@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const db = getAdmin()!;
+  const db = getAdmin();
+  if (!db) return NextResponse.json({ erro: "Banco de dados não configurado." }, { status: 503 });
   const { data: linha } = await db
     .from("rp_assinaturas")
     .select("*")
@@ -88,7 +89,9 @@ export async function GET(req: NextRequest) {
   const user = await usuarioDoToken(req.headers.get("authorization"));
   if (!user) return NextResponse.json({ erro: "Não autenticado." }, { status: 401 });
 
-  const { data } = await getAdmin()!
+  const db2 = getAdmin();
+  if (!db2) return NextResponse.json({ status: "nao_configurado" });
+  const { data } = await db2
     .from("rp_assinaturas")
     .select("status, pago_ate")
     .eq("user_id", user.id)

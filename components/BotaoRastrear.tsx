@@ -67,8 +67,14 @@ export default function BotaoRastrear({ origemLabel, destinoLabel, disabled }: P
         }).catch(console.error);
       };
 
+      const onGpsError = (err: GeolocationPositionError) => {
+        console.error("GPS error:", err);
+        setSessionId(null);
+        setEstado("erro");
+      };
+
       // primeira posição imediatamente
-      navigator.geolocation.getCurrentPosition(enviarPosicao, console.error, {
+      navigator.geolocation.getCurrentPosition(enviarPosicao, onGpsError, {
         enableHighAccuracy: true,
         timeout: 10000,
       });
@@ -76,10 +82,11 @@ export default function BotaoRastrear({ origemLabel, destinoLabel, disabled }: P
       // atualiza a cada 10s via watchPosition
       watchRef.current = navigator.geolocation.watchPosition(
         enviarPosicao,
-        console.error,
+        onGpsError,
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
       );
     } catch {
+      setSessionId(null);
       setEstado("erro");
     }
   }
